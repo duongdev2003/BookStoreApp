@@ -14,7 +14,7 @@ const LineDivider = () => {
 const Home = ({navigation}) => {
     const profileData = {
         name: 'Dương (bếch)',
-        point: 999,
+        point: 200,
     };
 
     const bookOtherWordsForHome = {
