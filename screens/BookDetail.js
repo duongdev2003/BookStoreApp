@@ -3,6 +3,14 @@ import {View, Text, ImageBackground, TouchableOpacity, Image, ScrollView, Animat
 import {FONTS, COLORS, SIZES, icons} from '../constants';
 
 const BookDetail = ({route, navigation}) => {
+    const LineDriver = () => {
+        return (
+            <View style={{width: 1, paddingVertical: 5}}>
+                <View style={{flex: 1, borderLeftColor: COLORS.lightGray2, borderLeftWidth: 1}}></View>
+            </View>
+        );
+    };
+
     const [book, setBook] = React.useState(null);
 
     React.useEffect(() => {
@@ -104,9 +112,22 @@ const BookDetail = ({route, navigation}) => {
                         <Text style={{...FONTS.h3, color: COLORS.white}}>{book.rating}</Text>
                         <Text style={{...FONTS.body4, color: COLORS.white}}>Rating</Text>
                     </View>
+
+                    <LineDriver />
+
                     {/* Page */}
+                    <View style={{flex: 1, alignItems: 'center'}}>
+                        <Text style={{...FONTS.h3, color: COLORS.white}}>{book.pageNo}</Text>
+                        <Text style={{...FONTS.body4, color: COLORS.white}}>Number of Pge</Text>
+                    </View>
+                    
+                    <LineDriver />
 
                     {/* Language */}
+                    <View style={{flex: 1, alignItems: 'center'}}>
+                        <Text style={{...FONTS.h3, color: COLORS.white}}>{book.language}</Text>
+                        <Text style={{...FONTS.body4, color: COLORS.white}}>Language</Text>
+                    </View>
                 </View>
             </View>
         );
