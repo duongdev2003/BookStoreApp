@@ -13,6 +13,11 @@ const BookDetail = ({route, navigation}) => {
 
     const [book, setBook] = React.useState(null);
 
+    const [scrollViewWholeHeight, setScrollViewWholeHeight] = React.useState(1);
+    const [scrollViewVisibleHeight, setScrollViewVisibleHeight] = React.useState(0);
+
+    const indicator = new Animated.Value(0);
+
     React.useEffect(() => {
         let {book} = route.params;
         setBook(book);
@@ -108,7 +113,7 @@ const BookDetail = ({route, navigation}) => {
                         backgroundColor: 'rgba(0, 0, 0, 0.3)',
                     }}>
                     {/* Rating */}
-                    <View style={{flex: 1, alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'center', paddingHorizontal: SIZES.radius}}>
                         <Text style={{...FONTS.h3, color: COLORS.white}}>{book.rating}</Text>
                         <Text style={{...FONTS.body4, color: COLORS.white}}>Rating</Text>
                     </View>
@@ -120,7 +125,7 @@ const BookDetail = ({route, navigation}) => {
                         <Text style={{...FONTS.h3, color: COLORS.white}}>{book.pageNo}</Text>
                         <Text style={{...FONTS.body4, color: COLORS.white}}>Number of Pge</Text>
                     </View>
-                    
+
                     <LineDriver />
 
                     {/* Language */}
@@ -133,6 +138,63 @@ const BookDetail = ({route, navigation}) => {
         );
     }
 
+    function renderDescription() {
+        const indicatorSize =
+            scrollViewWholeHeight > scrollViewVisibleHeight
+                ? (scrollViewVisibleHeight * scrollViewVisibleHeight) / scrollViewWholeHeight
+                : scrollViewVisibleHeight;
+
+        const difference = scrollViewVisibleHeight > indicatorSize ? scrollViewVisibleHeight - indicatorSize : 1;
+
+        return (
+            <View style={{flex: 1, flexDirection: 'row', padding: SIZES.padding}}>
+                {/* Custom scrollbar */}
+                <View style={{width: 4, height: '100%', backgroundColor: COLORS.gray1}}>
+                    <Animated.View
+                        style={{
+                            width: 4,
+                            height: indicatorSize,
+                            backgroundColor: COLORS.lightGray4,
+                            transform: [
+                                {
+                                    translateY: Animated.multiply(
+                                        indicator,
+                                        scrollViewVisibleHeight / scrollViewWholeHeight,
+                                    ).interpolate({
+                                        inputRange: [0, difference],
+                                        outputRange: [0, difference],
+                                        extrapolate: 'clamp',
+                                    }),
+                                },
+                            ],
+                        }}
+                    />
+                </View>
+                {/* Desc */}
+                <ScrollView
+                    contentContainerStyle={{paddingLeft: SIZES.padding2}}
+                    showsVerticalScrollIndicator={false}
+                    scrollEventThrottle={16}
+                    onContentSizeChange={(width, height) => {
+                        setScrollViewWholeHeight(height);
+                    }}
+                    onLayout={({
+                        nativeEvent: {
+                            layout: {x, y, width, height},
+                        },
+                    }) => {
+                        setScrollViewVisibleHeight(height);
+                    }}
+                    onScroll={Animated.event([{nativeEvent: {contentOffset: {y: indicator}}}], {
+                        useNativeDriver: false,
+                    })}>
+                    <Text style={{...FONTS.h2, color: COLORS.white, marginBottom: SIZES.padding}}>Description</Text>
+                    <Text style={{...FONTS.body2, color: COLORS.lightGray}}>{book.description}</Text>
+                </ScrollView>
+            </View>
+        );
+    }
+
     if (book) {
         return (
             <View style={{flex: 1, backgroundColor: COLORS.black}}>
@@ -140,7 +202,7 @@ const BookDetail = ({route, navigation}) => {
                 <View style={{flex: 4}}>{renderBookInfoSection()}</View>
 
                 {/* Desc */}
-                <View style={{flex: 2}}></View>
+                <View style={{flex: 2}}>{renderDescription()}</View>
 
                 {/* Buttons */}
                 <View style={{height: 70}}></View>
